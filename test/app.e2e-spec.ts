@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { AuthDto } from './../src/auth/dto/auth.dto';
 import { EditUserDto } from './../src/user/dto/edit-user.dto';
+import { AddBookmarkDto } from './../src/bookmark/dto/add-bookmark.dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -151,12 +152,42 @@ describe('App e2e', () => {
   });
 
   describe('Bookmarks', () => {
-    describe('Get bookmarks', () => {
-      it.todo('Should pass');
-    });
+    const addBookmarkDto: AddBookmarkDto = {
+      title: 'Test bookmark',
+      link: 'Link of bookmark',
+    };
     describe('Add bookmarks', () => {
-      it.todo('Should pass');
+      it('Should get reject unauthorized users', () => {
+        return pactum.spec().post('/bookmarks').expectStatus(401);
+      });
+
+      it('Should create bookmark', () => {
+        return pactum
+          .spec()
+          .post('/bookmarks')
+          .withBody(addBookmarkDto)
+          .withHeaders('Authorization', 'Bearer $S{userAt}')
+          .expectStatus(201);
+      });
     });
+
+    describe('Get bookmarks', () => {
+      it('Should get reject unauthorized users', () => {
+        return pactum.spec().get('/bookmarks').expectStatus(401);
+      });
+
+      it('Should get user bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders('Authorization', 'Bearer $S{userAt}')
+          .expectStatus(200)
+          .expectBodyContains(addBookmarkDto.title)
+          .expectBodyContains(addBookmarkDto.link)
+          .inspect();
+      });
+    });
+
     describe('Get bookmarks by id', () => {
       it.todo('Should pass');
     });
