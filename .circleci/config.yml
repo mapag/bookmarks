@@ -6,19 +6,24 @@ jobs:
 
     docker:
       - name: dev
-        image: circleci/node:16
+        image: cimg/node:16
+        
+        environment:
+          PORT: 3333
+          JWT_SECRET: supersecret
+          DATABASE_URL: postgresql://postgres@localhost/circle_test
+        
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
 
       - name: postgres-dev
-        image: circleci/postgres:13
+        image: cimg/postgres:14.0
         environment:
           POSTGRES_USER: postgres
-          POSTGRES_DB_NAME: nest
-          POSTGRES_PASSWORD: cci
-
-    environment:
-      PORT: 3333
-      JWT_SECRET: supersecret
-      DATABASE_URL: postgresql://postgres:cci@localhost:5432/nest?schema=public
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
 
     steps:
       - checkout
