@@ -2,8 +2,6 @@ version: 2.1
 
 jobs:
   e2e_tests:
-    working_directory: ~/bookmarks
-
     docker:
       - name: dev
         image: circleci/node:16
