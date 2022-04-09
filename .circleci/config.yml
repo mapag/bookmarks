@@ -6,10 +6,10 @@ jobs:
 
     docker:
       - name: dev
-      - image: circleci/node:16
+        image: circleci/node:16
 
       - name: postgres-dev
-      - image: circleci/postgres:latest
+        image: circleci/postgres:latest
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB_NAME: nest
