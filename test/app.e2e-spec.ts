@@ -1,4 +1,3 @@
-import { AuthDto } from './../src/auth/dto/auth.dto';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
@@ -6,6 +5,9 @@ import * as pactum from 'pactum';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from './../src/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+
+import { AuthDto } from './../src/auth/dto/auth.dto';
+import { EditUserDto } from './../src/user/dto/edit-user.dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -121,8 +123,7 @@ describe('App e2e', () => {
   describe('User', () => {
     const userEmail = 'test@test.com';
     describe('Get me', () => {
-      it.todo('Should pass');
-      it('Should current user', () => {
+      it('Should get current user', () => {
         return pactum
           .spec()
           .get('/users/me')
@@ -132,7 +133,20 @@ describe('App e2e', () => {
       });
     });
     describe('Edit user', () => {
-      it.todo('Should pass');
+      const editUserDto: EditUserDto = {
+        firstName: 'Juan',
+        lastName: 'Perez',
+      };
+      it('Should edit current user', () => {
+        return pactum
+          .spec()
+          .patch('/users/me')
+          .withHeaders('Authorization', 'Bearer $S{userAt}')
+          .withBody(editUserDto)
+          .expectStatus(200)
+          .expectBodyContains(editUserDto.firstName)
+          .expectBodyContains(editUserDto.lastName);
+      });
     });
   });
 
