@@ -32,6 +32,9 @@ jobs:
           name: Wait for DB to become available
           command: dockerize -wait tcp://postgres-dev:5432 -timeout 30s
       - run:
+          name: Run migrations
+          command: npx prisma migrate deploy
+      - run:
           name: Run unit tests
           command: npm run test-e2e
       - run:
