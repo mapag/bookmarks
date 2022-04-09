@@ -9,7 +9,7 @@ jobs:
         image: circleci/node:16
 
       - name: postgres-dev
-        image: circleci/postgres:latest
+        image: circleci/postgres:13.6
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB_NAME: nest
@@ -28,9 +28,6 @@ jobs:
       - run:
           name: Install dependencies
           command: npm install
-      - run:
-          name: Build Project
-          command: npm run build
       - run:
           name: Wait for DB to become available
           command: dockerize -wait tcp://postgres-dev:5432 -timeout 30s
