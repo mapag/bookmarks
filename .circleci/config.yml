@@ -1,0 +1,47 @@
+version: 2.1
+
+jobs:
+  e2e_tests:
+    working_directory: ~/bookmarks
+
+    docker:
+      - name: dev
+        image: cimg/node:16.14.2
+
+        environment:
+          PORT: 3333
+          JWT_SECRET: supersecret
+          DATABASE_URL: postgresql://postgres:$DOCKERHUB_PASSWORD@localhost/nest
+
+      - name: postgres-dev
+        image: cimg/postgres:14.0
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: $DOCKERHUB_PASSWORD
+          POSTGRES_DB: nest
+
+    steps:
+      - checkout
+      - run:
+          name: Update apt-get
+          command: sudo apt-get update
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Wait for DB to become available
+          command: dockerize -wait tcp://postgres-dev:5432 -timeout 30s
+      - run:
+          name: Run migrations
+          command: npx prisma migrate deploy
+      - run:
+          name: Run unit tests
+          command: npm run test-e2e
+      - run:
+          name: Stop app
+          command: pkill -SIGQUIT node
+
+workflows:
+  tests:
+    jobs:
+      - e2e_tests
